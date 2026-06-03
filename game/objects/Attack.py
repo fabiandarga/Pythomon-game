@@ -1,7 +1,7 @@
 class Attack:
-    def __init__(self, name, damage):
-        self._name = name
-        self._damage = damage
+    def __init__(self):
+        self._name = ""
+        self._damage = 0
 
     @property
     def name(self):
