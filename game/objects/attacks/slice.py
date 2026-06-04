@@ -1,9 +1,14 @@
+import random
 from game.objects.Attack import Attack
-from dataclasses import dataclass
 
-@dataclass(frozen=True)
 class Slice(Attack):
-    name: str = "Slice"
-    damage: int = 15
+    _name = "Slice"
+    _damage = 10
+    _cost = 15
+
+
+    def calculate_damage(self) -> int:
+        extra_dmg = random.random() * self.damage
+        return self.damage + int(extra_dmg)
 
 SLICE = Slice()

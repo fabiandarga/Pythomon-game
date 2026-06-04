@@ -1,20 +1,16 @@
 from dataclasses import dataclass
 from game.objects.Attack import Attack
-from game.AttackResult import AttackResult
+from game.objects.status import Status
+
 
 @dataclass(frozen=True)
 class Recursion(Attack):
-    name: str = "Recursion"
-    damage: int = 5
+    _name = "Recursion"
+    _damage = 5
+    _cost = 30
 
-    def execute(self, attacker, defender) -> AttackResult:
-        # Hits multiple times, but weaker each time
-        total = 0
-        dmg = self.damage
-        for _ in range(4):
-            defender.reduce_hp(dmg)
-            total += dmg
-            dmg //= 2
-        return AttackResult(self.name, total, defender.hp)
+    def apply_effects(self, attacker, defender):
+        def_change = defender.change_status(Status.POISONED)
+        return None, def_change
 
 RECURSION = Recursion()

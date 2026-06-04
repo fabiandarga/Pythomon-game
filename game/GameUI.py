@@ -1,9 +1,11 @@
-import os
-from typing import Optional
-
+from game.objects.Attack import Attack
+from game.objects.Pythomon import Pythomon
 from game.AttackResult import AttackResult
 from game.GameState import GameState
 import readchar
+
+from game.objects.status import Status
+
 
 class GameUI:
     def __init__(self, game_state: GameState):
@@ -12,18 +14,35 @@ class GameUI:
     def print_state(self):
         print("--------------------")
         print("~Player Monster~")
-        print(f"{self.game_state.player_monster.name}")
-        print(f"HP: {self.game_state.player_monster.hp}")
+        monster = self.game_state.player_monster
+        print(f"{monster.name}")
+        if monster._status != Status.NORMAL:
+            print(f"<{self.get_status_text(monster._status)}>")
+        print(f"HP: {monster.hp}")
+
         print("\n~Enemy Monster~")
-        print(f"{self.game_state.enemy_monster.name}")
-        print(f"HP: {self.game_state.enemy_monster.hp}")
+        enemy_monster = self.game_state.enemy_monster
+        print(f"{enemy_monster.name}")
+        if enemy_monster._status is not Status.NORMAL:
+            print(f"<{self.get_status_text(enemy_monster._status)}>")
+        print(f"HP: {enemy_monster.hp}")
         print("--------------------")
 
-    def display_attack_choices(self):
+    def get_status_text(self, status: Status) -> str:
+        match status:
+            case Status.POISONED:
+                return "Vergiftet"
+            case Status.CONFUSED:
+                return "Verwirrt"
+            case Status.SLEEPING:
+                return "Schläft"
+            case _:
+                return "Gesund"
+
+    def display_attack_choices(self, options: list[Attack]):
         print("Was willst du tun?\n")
-        attacks = self.game_state.player_monster.attacks
-        for i, attack in enumerate(attacks):
-            print(f"[{i+1}] {attack.name}")
+        for i, option in enumerate(options):
+            print(f"[{i+1}] {option.name}")
 
     def wait_for_int_choice(self) -> int:
         while True:
@@ -54,6 +73,33 @@ class GameUI:
         else:
             print(f"{defender_name} is unconscious.")
 
+    def display_sleep(self, monster: Pythomon):
+        print(f"ZZZzzz... {monster.name} is sleeping.")
+
+    def display_poison_damage(self, monster: Pythomon, dmg: int):
+        print(f"☠️ {monster.name} took {dmg} poison damage.")
+
     def clear_screen(self):
         print("\033[2J\033[H", end="", flush=True)
 
+
+    def display_victory_screen(self):
+        self.clear_screen()
+        print("""
+            . ★ . * . * . ★ . * .
+        * . * . ★ . * . * . ★ . * . *
+                🏆 You win! 🏆
+           . ✦ . 🎆 . ✦ . 🎆 . ✦ .
+            . ★ . * . * . ★ . * .
+        """)
+
+    def display_game_over_screen(self):
+        self.clear_screen()
+        print("""
+        
+        . . . . . . . . . . . .
+        . . . . . . . . . . . .
+           💀 You lose... 💀
+        ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+        """)

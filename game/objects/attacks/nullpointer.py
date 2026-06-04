@@ -1,10 +1,15 @@
-from dataclasses import dataclass
 from game.objects.Attack import Attack
-from game.AttackResult import AttackResult
+from game.objects.status import Status
 
 class Nullpointer(Attack):
-    name: str = "Nullpointer"
-    damage: int = 20
+    _name: str = "Nullpointer"
+    _damage: int = 20
+    _cost = 20
+
+    def apply_effects(self, attacker, defender):
+        attacker_change = attacker.change_status(Status.CONFUSED)
+        defender_change = defender.change_status(Status.CONFUSED)
+        return attacker_change, defender_change
 
 
 NULLPOINTER = Nullpointer()

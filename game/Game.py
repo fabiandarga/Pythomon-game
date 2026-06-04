@@ -1,5 +1,7 @@
 import random
 
+from game.objects.attacks.wait import WAIT
+from game.objects.attacks.wake_up import WAKE_UP
 from game.GameState import GameState
 from game.GameUI import GameUI
 
@@ -29,38 +31,55 @@ class Game:
             self.ui.wait_for_enter()
 
         if self.game_state.player_monster.hp <= 0:
-            print("""
-. . . . . . . . . . . .
-   💀 You lose... 💀
-~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
-""")
+            self.ui.display_game_over_screen()
         else:
-            print("""
-* . * . ★ . * . * . ★ . *
-      🏆 You win! 🏆
- . ✦ . 🎆 . ✦ . 🎆 . ✦ .
-""")
+            self.ui.display_victory_screen()
 
     def player_turn(self):
-        self.game_state.active_player = "player"
         print("Du bist am Zug!")
-        self.ui.display_attack_choices()
+        self.game_state.active_player = "player"
+        monster = self.game_state.player_monster
+
+        choices = monster.attacks
+        if monster.is_sleeping:
+            self.ui.display_sleep(monster)
+            choices = [WAIT, WAKE_UP]
+        elif monster.is_poisoned:
+            monster.reduce_hp(5)
+            self.ui.display_poison_damage(monster, 5)
+            if monster.hp <= 0:
+                self.game_state.running = False
+                return
+
+        self.ui.display_attack_choices(choices)
 
         choice = self.ui.wait_for_int_choice()
-
-        result = self.game_state.execute_attack(choice - 1)
+        attack = choices[choice - 1]
+        result = self.game_state.execute_attack(attack)
         self.ui.display_attack_result(result)
 
         if not result.alive:
             self.game_state.running = False
 
     def enemy_turn(self):
-        self.game_state.active_player = "enemy"
         print("Der gegner ist dran")
+        self.game_state.active_player = "enemy"
         monster = self.game_state.enemy_monster
-        choice = random.randint(0, len(monster.attacks) - 1 )
-        result = monster.attack(choice, self.game_state.player_monster)
 
+        choices = monster.attacks
+        if monster.is_sleeping:
+            self.ui.display_sleep(monster)
+            choices = [WAIT, WAKE_UP]
+        elif monster.is_poisoned:
+            monster.reduce_hp(5)
+            self.ui.display_poison_damage(monster, 5)
+            if monster.hp <= 0:
+                self.game_state.running = False
+                return
+
+        choice = random.randint(0, len(choices) - 1 )
+        attack = choices[choice - 1]
+        result = self.game_state.execute_attack(attack)
         self.ui.display_attack_result(result)
 
         if not result.alive:
