@@ -20,11 +20,26 @@ class Game:
             self.player_turn()
             print("[Press Enter]")
             self.ui.wait_for_enter()
-            print("--------------")
+            if not self.game_state.running:
+                break
 
+            print("--------------")
             self.enemy_turn()
             print("[Press Enter]")
             self.ui.wait_for_enter()
+
+        if self.game_state.player_monster.hp <= 0:
+            print("""
+. . . . . . . . . . . .
+   💀 You lose... 💀
+~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~ ~
+""")
+        else:
+            print("""
+* . * . ★ . * . * . ★ . *
+      🏆 You win! 🏆
+ . ✦ . 🎆 . ✦ . 🎆 . ✦ .
+""")
 
     def player_turn(self):
         self.game_state.active_player = "player"
