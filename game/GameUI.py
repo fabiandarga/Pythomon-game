@@ -19,6 +19,7 @@ class GameUI:
         if monster._status != Status.NORMAL:
             print(f"<{self.get_status_text(monster._status)}>")
         print(f"HP: {monster.hp}")
+        print(f"Energy: {monster.energy}")
 
         print("\n~Enemy Monster~")
         enemy_monster = self.game_state.enemy_monster
@@ -39,16 +40,20 @@ class GameUI:
             case _:
                 return "Gesund"
 
-    def display_attack_choices(self, options: list[Attack]):
+    def display_attack_choices(self, options: list[Attack], current_energy: int):
         print("Was willst du tun?\n")
         for i, option in enumerate(options):
-            print(f"[{i+1}] {option.name}")
+            if option.cost <= current_energy:
+                print(f"[{i+1}] {option.name} ({option.cost} E)")
+            else:
+                print(f"\033[38;5;244m[{i+1}] {option.name} ({option.cost} E)\033[0m")
 
-    def wait_for_int_choice(self) -> int:
+    def wait_for_int_choice(self, highest: int | None = None) -> int:
         while True:
             try:
-                key = int(readchar.readkey())
-                return key
+                number = int(readchar.readkey())
+                if highest is None or number <= highest:
+                    return number
             except ValueError:
                 pass
 

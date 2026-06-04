@@ -1,5 +1,6 @@
 import random
 
+from game.objects.Attack import Attack
 from game.objects.attacks.wait import WAIT
 from game.objects.attacks.wake_up import WAKE_UP
 from game.GameState import GameState
@@ -30,6 +31,9 @@ class Game:
             print("[Press Enter]")
             self.ui.wait_for_enter()
 
+            self.game_state.player_monster.add_energy(10)
+            self.game_state.enemy_monster.add_energy(10)
+
         if self.game_state.player_monster.hp <= 0:
             self.ui.display_game_over_screen()
         else:
@@ -51,10 +55,18 @@ class Game:
                 self.game_state.running = False
                 return
 
-        self.ui.display_attack_choices(choices)
+        has_valid_choices = any(c.cost <= monster.energy for c in choices)
+        if not has_valid_choices:
+            choices = [WAIT]
+        self.ui.display_attack_choices(choices, monster.energy)
 
-        choice = self.ui.wait_for_int_choice()
-        attack = choices[choice - 1]
+        attack = None
+        while attack is None:
+            choice = self.ui.wait_for_int_choice(len(choices))
+            attack = choices[choice - 1]
+            if attack.cost > monster.energy:
+                attack = None
+
         result = self.game_state.execute_attack(attack)
         self.ui.display_attack_result(result)
 
@@ -76,7 +88,9 @@ class Game:
             if monster.hp <= 0:
                 self.game_state.running = False
                 return
-
+        choices = [c for c in choices if c.cost <= monster.energy]
+        if len(choices) == 0:
+            choices = [WAIT]
         choice = random.randint(0, len(choices) - 1 )
         attack = choices[choice - 1]
         result = self.game_state.execute_attack(attack)

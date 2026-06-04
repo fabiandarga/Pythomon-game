@@ -33,6 +33,9 @@ class Pythomon:
     def reduce_energy(self, amount: int):
         self._energy -= amount
 
+    def add_energy(self, amount: int):
+        self._energy += amount
+
     def reduce_hp(self, amount: int):
         self._hp -= amount
 

@@ -18,10 +18,14 @@ class Attack:
     def damage(self):
         return self._damage
 
+    @property
+    def cost(self):
+        return self._cost
+
     def execute(self, attacker: 'Pythomon', defender: 'Pythomon') -> AttackResult:
         dmg = self.calculate_damage()
         defender.reduce_hp(dmg)
-        attacker.reduce_energy(self._cost)
+        attacker.reduce_energy(self.cost)
         status_changes = self.apply_effects(attacker, defender)
         return AttackResult(self.name, dmg, defender.hp, status_changes)
 
@@ -29,4 +33,4 @@ class Attack:
         return None, None
 
     def calculate_damage(self) -> int:
-        return self._damage
+        return self.damage

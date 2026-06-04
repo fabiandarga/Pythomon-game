@@ -5,4 +5,5 @@ from game.objects.attacks import TACKLE, INFINITY_LOOP
 class Pythork(Pythomon):
     _name = "Pythork"
     _base_hp = 90
+    _initial_energy = 100
     _base_attacks = [TACKLE, INFINITY_LOOP]
