@@ -2,8 +2,9 @@ from random import choice
 from typing import Type
 
 from game.objects.Pythomon import Pythomon
-from game.objects.pythomon.IfMon import IfMon
-from game.objects.pythomon.LoopMon import LoopMon
+from game.objects.pythomon.iffy import Iffy
+from game.objects.pythomon.loopard import Loopard
+from game.objects.pythomon.nullbear import Nullbear
 
 
 class PythomonFactory:
@@ -16,4 +17,4 @@ class PythomonFactory:
         # Maybe changing some factors randomly
         return monster
 
-pythomon_factory = PythomonFactory([IfMon, LoopMon])
+pythomon_factory = PythomonFactory([Iffy, Loopard, Nullbear])

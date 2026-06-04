@@ -1,6 +1,6 @@
 import unittest
 from game.objects.Pythomon import Pythomon
-from game.objects.attacks.Scratch import Scratch
+from game.objects.attacks.scratch import Scratch
 
 
 class PythomonTestCase(unittest.TestCase):

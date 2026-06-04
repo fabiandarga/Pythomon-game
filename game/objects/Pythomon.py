@@ -6,11 +6,13 @@ from game.objects.Attack import Attack
 MAX_ATTACK_OPTIONS = 4
 
 class Pythomon:
+    _name: str
+    _base_hp: int = 0
+    _base_attacks: list[Attack] = []
 
     def __init__(self) -> None:
-        self._name = ""
-        self._hp = 0
-        self._attacks: list[Attack] = []
+        self._hp = self._base_hp
+        self._attacks = list(self._base_attacks)
 
     @property
     def name(self) -> str:

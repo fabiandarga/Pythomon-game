@@ -2,9 +2,8 @@ from game.AttackResult import AttackResult
 
 
 class Attack:
-    def __init__(self):
-        self._name = ""
-        self._damage = 0
+    _name: str
+    _damage: int
 
     @property
     def name(self):
